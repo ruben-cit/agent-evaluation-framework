@@ -7,10 +7,10 @@ The language of an open framework for evaluating tool-using agents on versioned 
 ### Versioning
 
 **Persistent ID**:
-A stable identifier for the same entity across all its versions. For example, `dodgeball.annotate-throw` identifies the task that asks for the players, positions, and outcome of a marked throw. The task keeps that ID when its grading rule changes. Retired IDs stay reserved.
+A stable identifier for the same entity across all its versions. For example, `dodgeball.annotate-throw` identifies the task that asks for the players, positions, and outcome of a marked throw. The task keeps that ID when its answer key changes. Retired IDs stay reserved.
 
 **Version**:
-A fixed snapshot of an entity at a particular point in its history. For tasks and prompt templates, the framework uses the full Git commit SHA as the version identifier. For example, `dodgeball.annotate-throw` at `8f3c2a1…` (an illustrative, abbreviated SHA) refers to the task as defined at that commit. If a later commit corrects its grading rule, the task keeps its persistent ID and the new SHA identifies the updated version.
+A fixed snapshot of an entity at a particular point in its history. For tasks and prompt templates, the framework uses the full Git commit SHA as the version identifier. For example, `dodgeball.annotate-throw` at `8f3c2a1…` (an illustrative, abbreviated SHA) refers to the task as defined at that commit. If a later commit corrects its answer key, the task keeps its persistent ID and the new SHA identifies the updated version.
 
 ### Task
 
@@ -98,7 +98,7 @@ The conditions a trial ran under, recorded before it starts: the task and prompt
 _Avoid_: metadata
 
 **Trial evidence**:
-What is kept from one trial after its workspace is destroyed: the session transcript, the final response, and any files the subject produced. The answer grader and reviewers read only this.
+What is kept from one trial after its workspace is destroyed: the session transcript, the final response, and any files the subject produced. The answer grader reads only this.
 _Avoid_: archived evidence, captured evidence, evaluation evidence
 
 **Session transcript**:
@@ -121,11 +121,22 @@ _Avoid_: submitted JSON, final JSON object
 
 ### Grading
 
+**Check**:
+One rule in an answer key: the submitted value it covers, its private expected value, an error measure, and a tolerance. It passes when the error is at most the tolerance.
+
+**Grade**:
+The answer grader’s record for one trial: the verdict, each check’s error, tolerance, and result, and the grader version and settings.
+_Avoid_: score, answer grade
+
 **Verdict**:
-The answer grader’s result for a trial: pass or fail.
+The pass or fail result in a grade.
 
 **Infrastructure failure**:
 A trial that could not run properly for a reason outside the subject’s doing, such as a provider outage.
 
-**Unscored**:
-Having no verdict because the trial ended in an infrastructure failure. Unscored trials are left out of the pass rate.
+**Ungraded**:
+Having no grade because the trial ended in an infrastructure failure. Ungraded trials are left out of the pass rate.
+_Avoid_: unscored
+
+**Pass rate**:
+Passed trials divided by graded trials.
