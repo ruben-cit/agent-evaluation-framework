@@ -14,48 +14,27 @@
 .glossary dt,.glossary dd{display:inline;margin:0}
 .glossary dt{font-weight:700;color:var(--accent);margin-inline-end:.4em}
 </style></head>
-<body><a class="skip" href="#report">Skip to report</a><header><div class="cover"><div class="meta"><span>Architecture specification</span><time datetime="2026-11-21">21 Nov 2026</time></div><h1>An open framework for evaluating tool-using agents</h1></div></header><div class="layout"><main id="report"><details><summary>Report contents</summary><a href="#definitions">Definitions</a>
-<a href="#architecture">Architecture</a>
-<a href="#generating-and-validating-cases">Generating and validating cases</a>
-<a href="#case-contract">Case contract</a>
-<a href="#isolation-and-integrity">Isolation and integrity</a>
+<body><a class="skip" href="#report">Skip to report</a><header><div class="cover"><div class="meta"><span>Architecture specification</span><time datetime="2026-11-21">21 Nov 2026</time></div><h1>An open framework for evaluating tool-using agents</h1></div></header><div class="layout"><main id="report"><details><summary>Report contents</summary><a href="#architecture">Architecture</a>
+<a href="#generating-and-validating-tasks">Generating and validating tasks</a>
+<a href="#task-contract">Task contract</a>
+<a href="#isolation">Isolation</a>
 <a href="#storage">Project storage</a>
 <a href="#session-and-resource-record">Session and resource record</a>
-<a href="#comparisons-and-human-review">Comparisons and human review</a>
+<a href="#comparisons">Comparisons</a>
 <a href="#dodgeball-stat-tracker">Dodgeball stat tracker</a>
-</details><section id="definitions"><h2>Definitions</h2>
-<dl class="glossary">
-  <div><dt>Persistent ID</dt> <dd>A stable identifier for the same entity across all its versions. For example, <code>dodgeball.annotate-throw</code> identifies the task of identifying the players, positions, and outcome of a marked throw. The case keeps that ID when its grading rule changes. Retired IDs stay reserved.</dd></div>
-  <div><dt>Version</dt> <dd>A fixed snapshot of an entity at a particular point in its history. For cases and prompt templates, the framework uses the full Git commit SHA as the version identifier. For example, <code>dodgeball.annotate-throw</code> at <code>8f3c2a1…</code> (an illustrative, abbreviated SHA) refers to the case as defined at that commit. If a later commit corrects its grading rule, the case keeps its persistent ID and the new SHA identifies the updated version.</dd></div>
-  <div><dt>Case</dt> <dd>A versioned definition of the public task instructions, public response schema, fixtures, and private answer key.
-  <dl>
-    <div><dt>Fixtures</dt> <dd>The inputs and setup a case requires before an attempt begins. For the dodgeball case, the engine places the pinned clip, roster, and court overlay at the paths named in the task.</dd></div>
-    <div><dt>Task</dt> <dd>The public case field that tells the subject what to do.</dd></div>
-    <div><dt>Response schema</dt> <dd>The public case field that defines the JSON object the subject must return.</dd></div>
-  </dl></dd></div>
-  <div><dt>Prompt template</dt> <dd>Versioned wording with a <code>{{task}}</code> placeholder. The engine fills it with the case’s task instructions and JSON response schema to produce the delivered prompt.
-  <dl>
-    <div><dt>Delivered prompt</dt> <dd>The exact user message or conversation the evaluation engine sends to the subject after rendering the task instructions and response schema in the selected template.</dd></div>
-  </dl></dd></div>
-  <div><dt>Subject</dt> <dd>The tool-using agent being evaluated.
-  <dl>
-    <div><dt>Agent configuration</dt> <dd>The provider, model, harness, and reasoning effort selected for the subject. Pi is the default harness. Harness configuration includes the selected extensions and their versions.</dd></div>
-  </dl></dd></div>
-  <div><dt>Attempt</dt> <dd>One execution of a subject on one case using one selected prompt template version. Each attempt starts fresh with the case’s fixtures. Each fresh attempt under the same conditions counts as one <strong>replication</strong>, including the first. Replications use the same case and prompt template versions, fixtures, agent configuration, tool permissions, and budgets.</dd></div>
-  <div><dt>Run</dt> <dd>A collection of attempts for a specified suite version, agent configuration, and selection of cases. The run setting <strong>replications per case</strong> specifies how many fresh attempts to schedule for each selected case under each selected prompt template.</dd></div>
-  <div><dt>Suite</dt> <dd>A named collection of cases. Each published suite version pins the case and prompt template versions it includes.</dd></div>
-</dl>
-<p>A new suite release can pin the corrected case version while earlier attempts still point to the version they used.</p></section><section id="architecture"><h2>Architecture</h2><figure class="architecture-map"><svg xmlns="http://www.w3.org/2000/svg" width="800" height="1120" viewBox="0 0 800 1120" role="img" aria-labelledby="arch-title arch-desc">
-<title id="arch-title">Architecture of an evaluation attempt</title><desc id="arch-desc">The authoring workbench promotes reviewed draft case versions so runs can include them. The evaluation engine selects a prompt template and a case. Harness extensions expose tools to the model inside the isolated attempt. Every attempt routes software downloads through the package proxy. It forwards requests to agent-selected sources by default. The answer grader scores the submitted JSON, and an agentic session grader reviews the recorded session once to return an integrity verdict and flags for tool availability or suspicious installations. Project SQLite stores queryable run, attempt, evidence, and grading records, with large artifacts kept in linked files.</desc>
+<a href="#future-extensions">Future extensions</a>
+<a href="#glossary">Glossary</a>
+</details><section id="architecture"><h2>Architecture</h2><figure class="architecture-map"><svg xmlns="http://www.w3.org/2000/svg" width="800" height="1120" viewBox="0 0 800 1120" role="img" aria-labelledby="arch-title arch-desc">
+<title id="arch-title">Architecture of an evaluation trial</title><desc id="arch-desc">The authoring workbench publishes draft task versions so runs can include them. The evaluation engine selects a prompt template and a task. Harness extensions expose tools to the model inside the sandbox. The answer grader scores the submission. Project SQLite stores queryable run, trial, evidence, and grading records, with large artifacts kept in linked files.</desc>
 
 <defs><marker id="tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L8 4L0 8Z" fill="#477466"/></marker></defs>
 <style>.arch-title{font:600 20px sans-serif;fill:#193c36}.arch-detail{font:15px sans-serif;fill:#395a51}.arch-label{font:600 14px sans-serif;fill:#395a51}.arch-chip{font:600 13px sans-serif;text-anchor:middle}.arch-arrow{fill:none;stroke:#477466;stroke-width:1.8;marker-end:url(#tip)}</style>
 <rect width="800" height="1080" fill="#f5f8f5"/>
 <rect x="376" y="12" width="388" height="67" rx="10" fill="#ebf2ed" stroke="#87a394"/>
 <text x="392" y="40" class="arch-title">Authoring workbench</text>
-<text x="392" y="63" class="arch-detail">Draft cases and check their answer keys.</text>
+<text x="392" y="63" class="arch-detail">Draft tasks and check their answer keys.</text>
 <path class="arch-arrow" d="M570 79V124"/>
-<text x="582" y="108" class="arch-label">Promote case</text>
+<text x="582" y="108" class="arch-label">Publish task version</text>
 <g transform="translate(0 70)">
 <rect x="36" y="56" width="320" height="136" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="52" y="83" class="arch-title">Prompt template</text>
@@ -64,32 +43,32 @@
 <rect x="156" y="96" width="64" height="23" rx="11" fill="#def0e6" stroke="none"/>
 <text class="arch-chip" x="188" y="112" fill="#275b48">Version</text>
 <rect x="376" y="56" width="388" height="136" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="392" y="83" class="arch-title">Case</text>
+<text x="392" y="83" class="arch-title">Task</text>
 <rect x="392" y="96" width="98" height="23" rx="11" fill="#def0e6" stroke="none"/>
 <text class="arch-chip" x="441" y="112" fill="#275b48">Persistent ID</text>
 <rect x="496" y="96" width="64" height="23" rx="11" fill="#def0e6" stroke="none"/>
 <text class="arch-chip" x="528" y="112" fill="#275b48">Version</text>
 <rect x="52" y="128" width="134" height="23" rx="11" fill="#eee8f7" stroke="none"/>
 <text class="arch-chip" x="119" y="144" fill="#503d67">Template wording</text>
-<rect x="392" y="126" width="49" height="23" rx="11" fill="#eee8f7" stroke="none"/>
-<text class="arch-chip" x="416.5" y="142" fill="#503d67">Task</text>
-<rect x="447" y="126" width="132" height="23" rx="11" fill="#eee8f7" stroke="none"/>
-<text class="arch-chip" x="513" y="142" fill="#503d67">Response schema</text>
-<rect x="585" y="126" width="76" height="23" rx="11" fill="#eee8f7" stroke="none"/>
-<text class="arch-chip" x="623" y="142" fill="#503d67">Fixtures</text>
+<rect x="392" y="126" width="100" height="23" rx="11" fill="#eee8f7" stroke="none"/>
+<text class="arch-chip" x="442" y="142" fill="#503d67">Instructions</text>
+<rect x="498" y="126" width="132" height="23" rx="11" fill="#eee8f7" stroke="none"/>
+<text class="arch-chip" x="564" y="142" fill="#503d67">Response schema</text>
+<rect x="636" y="126" width="76" height="23" rx="11" fill="#eee8f7" stroke="none"/>
+<text class="arch-chip" x="674" y="142" fill="#503d67">Fixtures</text>
 <rect x="392" y="156" width="95" height="23" rx="11" fill="#eee8f7" stroke="none"/>
 <text class="arch-chip" x="439.5" y="172" fill="#503d67">Answer key</text>
 <path class="arch-arrow" d="M196 192V233"/><path class="arch-arrow" d="M570 192V233"/>
 <rect x="36" y="235" width="728" height="77" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="54" y="265" class="arch-title">Evaluation engine</text>
-<text x="54" y="292" class="arch-detail">Prepare fixtures, render the prompt, and launch the agent.</text>
+<text x="54" y="292" class="arch-detail">Prepare fixtures, render the prompt, and launch the subject.</text>
 <path fill="none" stroke="#477466" stroke-width="1.8" d="M206 312V350"/>
 <text x="220" y="337" class="arch-label">Delivered prompt</text>
-<rect x="36" y="350" width="374" height="195" rx="10" fill="#e7f1ea" stroke="#87a394"/>
-<text x="52" y="377" class="arch-label">Isolated attempt</text>
-<rect x="52" y="389" width="342" height="140" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="67" y="417" class="arch-title">Tool-using agent</text>
-<text x="67" y="441" class="arch-detail">Agent configuration</text>
+<rect x="36" y="350" width="728" height="195" rx="10" fill="#e7f1ea" stroke="#87a394"/>
+<text x="52" y="377" class="arch-label">Sandbox</text>
+<rect x="52" y="389" width="696" height="140" rx="10" fill="#fff" stroke="#a3b8ae"/>
+<text x="67" y="417" class="arch-title">Subject</text>
+<text x="67" y="441" class="arch-detail">Subject configuration</text>
 <rect x="67" y="455" width="74" height="23" rx="11" fill="#eee8f7" stroke="none"/>
 <text class="arch-chip" x="104" y="471" fill="#503d67">Provider</text>
 <rect x="147" y="455" width="60" height="23" rx="11" fill="#eee8f7" stroke="none"/>
@@ -102,37 +81,19 @@
 <rect x="203" y="489" width="94" height="23" rx="11" fill="#eee8f7"/>
 <text class="arch-chip" x="250" y="505" fill="#503d67">Extensions</text>
 <path class="arch-arrow" d="M206 350V387"/>
-<rect x="474" y="389" width="290" height="69" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="492" y="418" class="arch-title">Package proxy</text>
-<text x="492" y="442" class="arch-detail">Forward downloads by default.</text>
-<path class="arch-arrow" d="M394 426H472"/>
-<text x="416" y="402" class="arch-label">Install</text>
-<text x="416" y="418" class="arch-label">tools</text>
-<rect x="474" y="480" width="290" height="109" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="492" y="510" class="arch-title">Tool broker (optional)</text>
-<text x="492" y="540" class="arch-detail">Scope service access and record actions.</text>
-<path class="arch-arrow" d="M396 476H440V534H472" marker-start="url(#tip)"/>
 <path class="arch-arrow" d="M223 545V618"/>
-<path class="arch-arrow" d="M764 424H782V600H649V618"/>
-<path class="arch-arrow" d="M619 589V618"/>
 <rect x="36" y="620" width="728" height="74" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="54" y="649" class="arch-title">Attempt evidence</text>
-<text x="54" y="675" class="arch-detail">Archived session transcript, final response, usage, and independent observations</text>
+<text x="54" y="649" class="arch-title">Trial evidence</text>
+<text x="54" y="675" class="arch-detail">Session transcript, final response, and files</text>
 <path class="arch-arrow" d="M211 694V726"/>
-<path class="arch-arrow" d="M589 694V726"/>
-<rect x="36" y="728" width="350" height="108" rx="10" fill="#fff" stroke="#a3b8ae"/>
+<rect x="36" y="728" width="728" height="108" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="52" y="757" class="arch-title">Answer grader</text>
 <text x="52" y="786" class="arch-detail">Check the submission against the schema,</text>
-<text x="52" y="806" class="arch-detail">answer key, and required effects.</text>
-<rect x="414" y="728" width="350" height="108" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="430" y="757" class="arch-title">Session grader</text>
-<text x="430" y="786" class="arch-detail">One agentic review of session evidence</text>
-<text x="430" y="806" class="arch-detail">checks integrity, installs, and availability.</text>
+<text x="52" y="806" class="arch-detail">answer key, and required artifacts.</text>
 <path class="arch-arrow" d="M211 836V868H286V870"/>
-<path class="arch-arrow" d="M589 836V868H286"/>
 <rect x="36" y="870" width="500" height="72" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="54" y="899" class="arch-title">Project SQLite database</text>
-<text x="54" y="925" class="arch-detail">Runs, attempts, events, grades, annotations, and artifact references</text>
+<text x="54" y="925" class="arch-detail">Runs, trials, grades, and artifact references</text>
 <rect x="554" y="870" width="210" height="72" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="570" y="899" class="arch-title">Large artifacts</text>
 <text x="570" y="925" class="arch-detail">Files and tool results</text>
@@ -140,63 +101,54 @@
 <text x="469" y="893" class="arch-label">references</text>
 <path class="arch-arrow" d="M286 942V963"/>
 <rect x="36" y="965" width="728" height="65" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="54" y="993" class="arch-title">Dashboard and review</text>
-<text x="54" y="1018" class="arch-detail">Query runs and attempts, then open linked evidence.</text></g></svg><figcaption><a href="2026-11-21-agent-evaluation-architecture.svg">Open full-size diagram</a></figcaption></figure><table><thead><tr><th scope="col">Component</th><th scope="col">Responsibility</th><th scope="col">Contract with the rest of the framework</th></tr></thead><tbody><tr><th scope="row">Authoring workbench</th><td data-label="Responsibility">Turn examples, incidents, specifications, or generated ideas into draft cases</td><td data-label="Contract with the rest of the framework">Records each draft’s source and rationale in the case contract. Promotion records a person’s approval of one case version so a run can include it.</td></tr><tr><th scope="row">Evaluation engine</th><td data-label="Responsibility">Select the case and template versions, prepare fixtures, render and deliver the prompt, enforce budgets, collect evidence, and invoke the answer and session graders</td><td data-label="Contract with the rest of the framework">Owns the attempt record. Renders both public case fields in the template and keeps the answer key under framework control for grading.</td></tr><tr><th scope="row">Harness adapter</th><td data-label="Responsibility">Launch the agent with its configured harness tools</td><td data-label="Contract with the rest of the framework">The Pi adapter is the default and the only one a conforming implementation requires. It loads the selected extensions, records their versions, connects the agent to its tools, records exposed tools and any changes observable in the saved session, and archives the native session transcript before workspace teardown. Adapters for other harnesses, such as Claude Code or Codex CLI, are optional. Each one declares its supported models, tools, isolation features, usage fields, and transcript contents, and meets the same archival contract.</td></tr><tr><th scope="row">Isolated environment</th><td data-label="Responsibility">Provide a fresh workspace with the case’s fixtures and enforce access to files, processes, and the network</td><td data-label="Contract with the rest of the framework">Stage the fixtures and enforce the framework’s isolation boundary. Supply executor records for the session grader.</td></tr>
-<tr><th scope="row">Tool broker (optional)</th><td data-label="Responsibility">Mediate calls to external tools and services when scoped access or independent evidence is needed</td><td data-label="Contract with the rest of the framework">Scope service access to the attempt. Record requests, results, and observed effects with the attempt ID.</td></tr><tr><th scope="row">Package proxy</th><td data-label="Responsibility">Route software downloads for every attempt</td><td data-label="Contract with the rest of the framework">In pass-through mode, forward requests for agent-selected packages, binaries, and source archives from any software source. Attribute requests and download outcomes to the attempt and record the exact artifacts served.</td></tr><tr><th scope="row">Answer grader</th><td data-label="Responsibility">Validate the final JSON object, apply the private answer key, and check any required artifacts or effects</td><td data-label="Contract with the rest of the framework">Returns a verdict, criterion-level evidence, and reasons. An archived attempt can be graded again without invoking the subject.</td></tr><tr><th scope="row">Session grader</th><td data-label="Responsibility">Review the session once for policy compliance and tool availability</td><td data-label="Contract with the rest of the framework">An agentic grader reads the archived transcript alongside the installation inventory, executor observations, package-proxy records, and any tool-broker events. It returns an integrity verdict and separate evidence-linked flags for unavailable tools and suspicious installations.</td></tr><tr><th scope="row">Project storage and reporting</th><td data-label="Responsibility">Preserve each attempt, compare results across subjects or prompt templates, and support human review</td><td data-label="Contract with the rest of the framework">The engine writes to the project SQLite database and retains large payloads in its artifact directory. The dashboard reads attempt records and follows artifact references for inspection.</td></tr></tbody></table><h3>Harness extensions</h3>
-<p>Pi extensions run in the harness process and can register model-callable tools with <code>pi.registerTool()</code>. The executor applies the attempt’s permissions to the harness and its extensions. <a href="https://docs.pi.dev/latest/extensions">Pi extension documentation</a></p>
-<p>For example, a dodgeball extension could expose <code>inspect_frame</code>. A local implementation reads the staged clip with FFmpeg inside the attempt. If FFmpeg needs installing, its download goes through the package proxy in the same way as any other software download. A hosted implementation can send the same tool call to the external tool broker, which scopes the request to the attempt’s clip and records the outcome. The Pi trace identifies the model’s request. The executor or broker supplies independent evidence of its effects.</p>
+<text x="54" y="993" class="arch-title">Dashboard</text>
+<text x="54" y="1018" class="arch-detail">Query runs and trials, then open linked evidence.</text></g></svg><figcaption><a href="2026-11-21-agent-evaluation-architecture.svg">Open full-size diagram</a></figcaption></figure><table><thead><tr><th scope="col">Component</th><th scope="col">Responsibility</th><th scope="col">Contract with the rest of the framework</th></tr></thead><tbody><tr><th scope="row">Authoring workbench</th><td data-label="Responsibility">Turn examples, incidents, specifications, or generated ideas into draft tasks</td><td data-label="Contract with the rest of the framework">Records each draft’s source and rationale in the task contract. Publication records an approver’s approval of one task version so a run can include it.</td></tr><tr><th scope="row">Evaluation engine</th><td data-label="Responsibility">Select the task and template versions, prepare fixtures, render and deliver the prompt, collect evidence, and invoke the answer grader</td><td data-label="Contract with the rest of the framework">Owns the trial record. Renders the task’s instructions and response schema in the template and keeps the answer key under framework control for grading.</td></tr><tr><th scope="row">Harness adapter</th><td data-label="Responsibility">Launch the subject’s harness with its configured tools</td><td data-label="Contract with the rest of the framework">The Pi adapter is the default and the only one a conforming implementation requires. It loads the selected extensions, records their versions, connects the model to its tools, records exposed tools and any changes to them visible in the session transcript, and archives the session transcript before workspace teardown. Adapters for other harnesses, such as Claude Code or Codex CLI, are optional. Each one declares its supported models, tools, isolation features, usage fields, and transcript contents, and meets the same archival contract.</td></tr><tr><th scope="row">Sandbox</th><td data-label="Responsibility">Provide a fresh workspace with the task’s fixtures and enforce access to files, processes, and the network</td><td data-label="Contract with the rest of the framework">Stage the fixtures and enforce the framework’s isolation boundary.</td></tr><tr><th scope="row">Answer grader</th><td data-label="Responsibility">Validate the submission, apply the private answer key, and check any required artifacts</td><td data-label="Contract with the rest of the framework">Returns a verdict, criterion-level evidence, and reasons.</td></tr><tr><th scope="row">Project storage and reporting</th><td data-label="Responsibility">Preserve each trial and compare results across subjects or prompt templates</td><td data-label="Contract with the rest of the framework">The engine writes to the project SQLite database and retains large payloads in its artifact directory. The dashboard reads trial records and follows artifact references for inspection.</td></tr></tbody></table><h3>Harness extensions</h3>
+<p>Pi extensions run in the harness process and can register model-callable tools with <code>pi.registerTool()</code>. The sandbox applies the trial’s permissions to the harness and its extensions. <a href="https://docs.pi.dev/latest/extensions">Pi extension documentation</a></p>
+<p>For example, a dodgeball extension could expose <code>inspect_frame</code>. Its implementation reads the staged clip with FFmpeg inside the trial.</p>
 <p>An optional adapter must expose the same domain tools through its own harness’s mechanism, and a comparison across harnesses records any difference in the tools exposed.</p>
-<h3>Assembling an attempt</h3>
-<ol><li><strong>Prepare fixtures.</strong> The engine provisions a fresh isolated environment from the selected case, stages its pinned fixtures, and verifies both the effective access policy and the subject’s ability to read the paths named in the public task.</li>
-<li><strong>Render the prompt.</strong> The engine replaces the selected template’s <code>{{task}}</code> placeholder with the <code>task</code> instructions followed by the <code>response_schema</code> from the same case version. The engine passes that same schema directly to the validator. The private answer key goes to the answer grader.</li>
-<li><strong>Launch the agent.</strong> Once the fixtures are ready, the engine launches the harness with native session persistence enabled. At launch, it stores the exact prompt sent under the attempt ID, alongside the case, template, and fixture references.</li></ol>
-<p>Domain-specific fixtures, tools, and graders plug into these contracts. A domain author should be able to add a case without changing the engine. Adding an adapter for another harness leaves cases, prompt templates, graders, and stored records unchanged.</p></section><section id="generating-and-validating-cases"><h2>Generating and validating cases</h2><ol><li><strong>Choose a case.</strong> Record the capability it tests and the source of the example.</li><li><strong>Draft the case.</strong> Fill in the case contract and specify any acceptable alternative answers.</li><li><strong>Promote the case.</strong> An agent typically drafts the case. A person checks the answer key against the reference evidence, then promotes it. Record who promoted it and when. A run includes only promoted case versions. Every new version starts as a draft.</li><li><strong>Recheck live fixtures.</strong> For cases that use live data, specify when to revalidate the answer key. If the expected answer changes, create a new case version.</li></ol></section><section id="case-contract"><h2>Case contract</h2><table><thead><tr><th scope="col">Field</th><th scope="col">Meaning</th></tr></thead><tbody><tr><th scope="row">Identity and purpose</th><td data-label="Meaning">Give the case a stable ID and pin its version. Describe the capability it measures, where it came from, and which suite includes it. For example, the dodgeball case tests whether the agent can identify both players, locate them at release, and classify the outcome.</td></tr><tr><th scope="row">Fixtures</th><td data-label="Meaning">Inputs and setup for each attempt, including fixture versions and locations.</td></tr><tr><th scope="row">Task</th><td data-label="Meaning">Public instructions describing the question or action, relevant fixture paths, and how to interpret observations.</td></tr>
-<tr><th scope="row">Response schema</th><td data-label="Meaning">Public JSON Schema defining required keys, types, allowed values, and units where relevant. Both public fields belong to the case version. Changing either creates a new version under the same ID for the same case.</td></tr><tr><th scope="row">Answer key</th><td data-label="Meaning">Private expected values, error measures, and tolerances for the checks that cover the required fields, plus evidence sources and checks for any required actions or artifacts.</td></tr></tbody></table><h3>JSON submission</h3>
-<p>Every MVP attempt requires one JSON object as the entire final response. The delivered prompt contains the case’s response schema. The engine preserves the raw final reply. A missing reply, Markdown fence, surrounding prose, malformed JSON, or schema violation fails the submission. Validate required keys and types before comparing values. A string such as <code>"12"</code> fails a field declared as an integer.</p>
+<h3>Assembling a trial</h3>
+<ol><li><strong>Prepare fixtures.</strong> The engine provisions a fresh sandbox from the selected task, stages its fixtures, and verifies both the effective access policy and the subject’s ability to read the paths named in the instructions.</li>
+<li><strong>Render the prompt.</strong> The engine replaces the selected template’s <code>{{task}}</code> placeholder with the <code>instructions</code> followed by the <code>response_schema</code> from the same task version. The engine passes that same schema directly to the validator. The private answer key goes to the answer grader.</li>
+<li><strong>Launch the subject.</strong> Once the fixtures are ready, the engine launches the harness with native session persistence enabled. At launch, it stores the delivered prompt under the trial ID, alongside the task and template references.</li></ol>
+<p>Domain-specific fixtures, tools, and graders plug into these contracts. A domain author should be able to add a task without changing the engine. Adding an adapter for another harness leaves tasks, prompt templates, graders, and stored records unchanged.</p></section><section id="generating-and-validating-tasks"><h2>Generating and validating tasks</h2><ol><li><strong>Choose a task.</strong> Record the capability it tests and the source of the example.</li><li><strong>Draft the task.</strong> Fill in the task contract and specify any acceptable alternative answers.</li><li><strong>Publish the task version.</strong> An agent typically drafts the task. An approver checks that the draft makes sense and that its answer key matches its source material, then publishes it. Record who published it and when. A run includes only published task versions. Every new version starts as a draft.</li></ol></section><section id="task-contract"><h2>Task contract</h2><table><thead><tr><th scope="col">Field</th><th scope="col">Meaning</th></tr></thead><tbody><tr><th scope="row">Identity and purpose</th><td data-label="Meaning">Give the task a stable ID and pin its version. Describe the capability it measures, where it came from, and which suite includes it. For example, the dodgeball task tests whether the subject can identify both players, locate them at release, and classify the outcome.</td></tr><tr><th scope="row">Fixtures</th><td data-label="Meaning">Inputs and setup for each trial, including their locations.</td></tr><tr><th scope="row">Instructions</th><td data-label="Meaning">Text describing the question or action, relevant fixture paths, and how to interpret observations.</td></tr>
+<tr><th scope="row">Response schema</th><td data-label="Meaning">JSON Schema defining required keys, types, allowed values, and units where relevant. The instructions and response schema belong to the task version. Changing either creates a new version under the same ID for the same task.</td></tr><tr><th scope="row">Answer key</th><td data-label="Meaning">Private expected values, error measures, and tolerances for the checks that cover the required fields, plus checks for any required artifacts.</td></tr></tbody></table><h3>JSON submission</h3>
+<p>Every MVP trial requires one JSON object as the entire final response. The delivered prompt contains the task’s response schema. The engine preserves the final response as received. With a missing final response, Markdown fence, surrounding prose, or malformed JSON, there is no submission. A schema violation makes the submission invalid. Either outcome is a fail. Validate required keys and types before comparing values. A string such as <code>"12"</code> fails a field declared as an integer.</p>
 <h3>Answer-key rules</h3>
 <p>The answer key is a set of checks. Each check names the submitted value it covers, its private expected value, an error measure, and a nonnegative tolerance. The covered value is one field, an array field, or a group of fields that together form one quantity, such as a point. An error measure is a deterministic function of the submitted and expected values that returns one nonnegative number in declared units. A check passes when the error is at most the tolerance. Every required field belongs to at least one check. Exact matching is the default.</p>
 <ul><li><strong>Exact.</strong> The submitted value equals the expected value. Use this for player IDs, outcome labels, and numbers that must match exactly.</li>
 <li><strong>Absolute difference.</strong> For one number, the error is the absolute difference between the submitted and expected values in the field’s units. An expected value of 40 with a tolerance of 2 accepts 38 through 42.</li>
 <li><strong>Relative difference.</strong> For one number, the error is the absolute difference as a percentage of the magnitude of the expected value. An expected value of 40 with a tolerance of 2% accepts 39.2 through 40.8. At an expected value of zero, only zero qualifies. Use an absolute difference if nearby values should pass. For rates, specify whether an allowance is in percentage points or relative percent.</li>
 <li><strong>Distance.</strong> For numeric vectors of equal length whose components share one unit, the error is the Euclidean distance between the submitted and expected vectors. An expected point of (4.2, 8.4) with a tolerance of 1 accepts any point within 1 unit of it.</li></ul>
-<p>A case may declare another error measure if it is deterministic, defined in the case version, and named in the grade. The answer grade records each check’s error and tolerance, so a regrade under a different tolerance needs no new attempt.</p>
+<p>A task may declare another error measure if it is deterministic, defined in the task version, and named in the grade. The answer grade records each check’s error and tolerance.</p>
 <h3>Automatic pass or fail</h3>
-<ul><li><strong>Answer.</strong> Pass when the JSON satisfies the schema, every answer-key check passes, and archived files or independently observed effects confirm any required deliverables or actions.</li>
-<li><strong>Integrity.</strong> The session grader checks the transcript against trusted execution records. Pass when evidence covers every rule throughout the attempt. Fail on a confirmed violation and cite the rule and event. A blocked request fails only if the rule forbids making it. If evidence is incomplete and no violation is established, leave integrity unscored.</li>
-<li><strong>Overall.</strong> Both verdicts must pass. Either failure makes the attempt fail. Otherwise, an unresolved verdict leaves the attempt unscored. Preserve both results and their evidence.</li></ul>
-<h3>Installation review</h3>
-<p>The session grader reviews successful installs against the framework’s integrity rules and the observed use of each library. An ordinary video decoder is expected for the dodgeball case. Evidence that an installed package supplied precomputed labels for the marked clip warrants a suspicious-installation flag. Record the package, reason, relevant rule, and supporting event IDs. A flag prompts review. Fail integrity only when trusted evidence establishes a prohibited action, such as reading restricted labels. A package name alone cannot establish that action.</p>
-</section><section id="isolation-and-integrity"><h2>Isolation and integrity</h2>
-<p>The agent may choose its methods and install and use tools within the isolated environment. Across all cases, accessing private answers, tampering with evaluation evidence, or escaping the container violates integrity. Give each attempt a fresh workspace, clean session, explicit environment, and declared fixtures. State persists across turns within that attempt. Keep service credentials, private answer keys, graders, proxies, evidence stores, and sibling workspaces outside the subject’s control.</p>
-<p>Separate the harness’s model connection from tool network access. Enforce scoped service access and required broker routes for every process in the attempt. Test each executor with disposable fixtures for restricted files, undeclared services, and prior workspaces. An unenforceable policy invalidates the attempt. Claims about unseen tasks also require held-out evaluation material.</p></section><section id="storage"><h2>Project storage</h2>
-<p>Each evaluation project has one <code>evaluations.sqlite</code> database shared across runs. The engine owns the database and the adjacent <code>artifacts/</code> directory. Both live outside the agent’s workspace. The dashboard reads the same database for comparisons and drill-down.</p>
+<p>Pass when the submission satisfies the response schema, every answer-key check passes, and archived files confirm any required deliverables. Otherwise fail. A trial that ends in an infrastructure failure is not graded and stays unscored.</p>
+</section><section id="isolation"><h2>Isolation</h2>
+<p>The subject may choose its methods and install and use tools within the sandbox. The sandbox must prevent the subject from accessing private answers, tampering with trial evidence, or escaping it. Give each trial a fresh workspace, clean session, explicit environment, and declared fixtures. State persists across turns within that trial. Keep service credentials, private answer keys, graders, evidence stores, and sibling workspaces outside the subject’s control.</p>
+<p>Separate the harness’s model connection from tool network access. Enforce scoped service access for every process in the trial. Test each sandbox against restricted files, undeclared services, and prior workspaces. A trial whose policy cannot be enforced is an infrastructure failure. Claims about unseen tasks also require held-out evaluation material.</p></section><section id="storage"><h2>Project storage</h2>
+<p>Each evaluation project has one <code>evaluations.sqlite</code> database shared across runs. The engine owns the database and the adjacent <code>artifacts/</code> directory. Both live outside the subject’s workspace. The dashboard reads the same database for comparisons and drill-down.</p>
 <table><thead><tr><th scope="col">Record</th><th scope="col">One row represents</th><th scope="col">Core fields</th></tr></thead><tbody>
-<tr><th scope="row"><code>runs</code></th><td data-label="One row represents">One scheduled evaluation</td><td data-label="Core fields">Run ID, suite ID and version, case and template selection, agent configuration, replications per case, budgets, engine version, status, and start and end times.</td></tr>
-<tr><th scope="row"><code>attempts</code></th><td data-label="One row represents">One fresh execution</td><td data-label="Core fields">Attempt ID, run ID, replication number, optional retry-of attempt ID, case and template IDs and pinned versions, fixture references, environment manifest, exact delivered prompt, transcript artifact reference and completeness, raw final response, parsed JSON when valid, execution status and timestamps, and the answer and session grade IDs selected for reporting.</td></tr>
-<tr><th scope="row"><code>events</code></th><td data-label="One row represents">One indexed transcript entry or independent observation</td><td data-label="Core fields">Event ID, attempt ID, sequence number, timestamp, source, event type, correlation ID where available, and details or artifact reference. Transcript entries can be indexed after archival. Preserve the source of independent executor, tool broker, and package proxy observations.</td></tr>
-<tr><th scope="row"><code>artifacts</code></th><td data-label="One row represents">One retained file reference</td><td data-label="Core fields">Artifact ID, attempt ID, role, relative path under artifacts/, content digest, byte size, and media type. Multiple attempts can reference the same underlying file.</td></tr>
-<tr><th scope="row"><code>grades</code></th><td data-label="One row represents">One grader evaluation of an attempt</td><td data-label="Core fields">Grade ID, attempt ID, grader kind, version and settings, time, verdict, and structured findings with evidence IDs. An answer grade carries each check with its error and tolerance. A session grade carries the integrity verdict and diagnostic flags for tool availability and suspicious installations.</td></tr>
-<tr><th scope="row"><code>usage</code></th><td data-label="One row represents">One reported measurement set</td><td data-label="Core fields">Attempt ID, subject or grader attribution, grade ID for a grader, measurement scope and optional call ID, native counters, normalized token counts, cost, cost basis, and pricing version where applicable.</td></tr>
-<tr><th scope="row"><code>annotations</code></th><td data-label="One row represents">One human review entry</td><td data-label="Core fields">Annotation ID, attempt ID, optional grade ID, reviewer, timestamp, classification, and note. An annotation preserves the underlying evidence and grade.</td></tr>
+<tr><th scope="row"><code>runs</code></th><td data-label="One row represents">One scheduled evaluation</td><td data-label="Core fields">Run ID, suite ID and version, task and template selection, subject configuration, trials per task, engine version, status, and start and end times.</td></tr>
+<tr><th scope="row"><code>trials</code></th><td data-label="One row represents">One fresh execution</td><td data-label="Core fields">Trial ID, run ID, trial number, task and template IDs and pinned versions, manifest, exact delivered prompt, transcript artifact reference, final response, submission when there is one, and execution status and timestamps.</td></tr>
+<tr><th scope="row"><code>artifacts</code></th><td data-label="One row represents">One retained file reference</td><td data-label="Core fields">Artifact ID, trial ID, role, relative path under artifacts/, content digest, byte size, and media type. Multiple trials can reference the same underlying file.</td></tr>
+<tr><th scope="row"><code>grades</code></th><td data-label="One row represents">The answer grader’s evaluation of a trial</td><td data-label="Core fields">Grade ID, trial ID, grader version and settings, time, verdict, and each check with its error and tolerance.</td></tr>
+<tr><th scope="row"><code>usage</code></th><td data-label="One row represents">One reported measurement set</td><td data-label="Core fields">Trial ID, measurement scope and optional call ID, native counters, normalized token counts, cost, cost basis, and pricing version where applicable.</td></tr>
 </tbody></table>
-<p>Use ordinary columns for identifiers, versions, verdicts, timestamps, and other fields used to filter or compare attempts. Use JSON for case-specific submissions, detailed grader findings, and provider-native event or usage payloads. Keep large payloads such as video clips, output files, and bulky tool results in <code>artifacts/</code>. Finish writing a file before committing its reference so a reader can open every committed artifact.</p>
-<h3>Writing and reviewing attempts</h3>
-<p>Create the attempt row before launch. On completion, timeout, or cancellation, archive the available native transcript before teardown and link it to the attempt. Store the final response if present, terminal execution status, and any missing or partial evidence. The engine coordinates writes across concurrent attempts. The session grader reads the archive after execution.</p>
-<p>Append each grading result with its own grade ID. A regrade adds a row against the same captured evidence. For each reported overall verdict, retain the answer and session grade IDs used to compute it. Count distinct scored attempts when computing sample size and pass rate. Regrading the same dodgeball clip execution changes the available assessments while its contribution to the sample stays at one.</p></section>
+<p>Use ordinary columns for identifiers, versions, verdicts, timestamps, and other fields used to filter or compare trials. Use JSON for task-specific submissions, detailed grader findings, and provider-native usage payloads. Keep large payloads such as video clips, output files, and bulky tool results in <code>artifacts/</code>. Finish writing a file before committing its reference so a reader can open every committed artifact.</p>
+<h3>Writing trials</h3>
+<p>Create the trial row before launch. On completion, timeout, or cancellation, archive the available session transcript before teardown and link it to the trial. Store the final response if present, terminal execution status, and any missing or partial evidence. The engine coordinates writes across concurrent trials.</p>
+<p>Each scored trial receives one grade.</p></section>
 <section id="session-and-resource-record"><h2>Session and resource record</h2>
-<p>Link records by attempt ID using the <a href="#storage">project storage schema</a>. Preserve partial evidence on timeout or cancellation.</p>
-<ul><li><strong>Manifest.</strong> Pin case and template IDs independently to GitHub file permalinks with full commit SHAs. Record fixture identities, budgets, effective permissions, software and context versions, extensions, exposed tools, and requested and resolved model and effort. Include the session grader’s model, instructions version, and settings.</li>
-<li><strong>Session transcript.</strong> Preserve visible messages and tool calls and results in their original order, including turn and call IDs when available. Record any missing coverage, such as a chat-only transcript, and any redactions. Exclude credentials and private reasoning. Retain independent executor or broker records for required effects and access checks.</li>
-<li><strong>Installations.</strong> Record the base image digest and the effective package-proxy policy (pass-through by default). Before teardown, reconcile install requests and outcomes visible in the transcript with the final package inventory and package-proxy download records and any independent installer records. Record installed libraries and dependencies, versions, sources, and artifact digests where observable. Distinguish preinstalled packages, downloads, successful installs, and failed attempts. Mark gaps in coverage.</li>
-<li><strong>Usage and cost.</strong> Preserve native input, output, and cache counters at their reported scope, including whether input totals include cached tokens. Leave missing values unknown. Separate subject and grader usage, wall time, and tool resources. Label costs as provider-reported or estimated and retain the pricing basis.</li>
-<li><strong>Results.</strong> Keep the raw reply, parsed JSON when valid, answer-key checks, answer and integrity verdicts, and availability and suspicious-installation flags with their evidence. A regrade uses the archived evidence. A rerun creates a fresh attempt.</li></ul></section><section id="comparisons-and-human-review"><h2>Comparisons and human review</h2>
-<p>Predeclare cases, replications, budgets, and the primary metric. Compare agents on the same case versions, templates, and fixtures. Record the baseline agent’s permissions and differences in tools, context, or limits. To test wording, vary only the template.</p>
-<p>Report results per case, template, and agent configuration. Show scheduled and scored attempts, passes, unscored reasons, elapsed time, and token usage. For example, 20 scheduled attempts with two infrastructure errors and 17 passes yield <strong>17/18 scored attempts passed (94.4%)</strong>. Link retries to their originals. Label smoke runs and compare suite scores only across compatible coverage.</p>
-<p>Summarize tool flags by tool, reason, affected attempts, and recovery. Link findings to evidence. Reviewers can label subject errors, infrastructure problems, and grading defects while preserving the original verdict and any regrade.</p></section><section id="dodgeball-stat-tracker"><h2>Dodgeball stat tracker</h2>
-<p>The engine stages the marked throw at <code>clip.mp4</code>, the jersey-to-player mapping at <code>roster.json</code>, and the court overlay at <code>court.png</code> in a fresh workspace. The public task names those paths and asks, “Who threw the ball, who was the intended target, what happened, and where was the thrower at release and the target at arrival?” The separate <code>response_schema</code> field defines the player IDs, outcome label, and positions.</p>
-<p>For a template reading “Annotate the highlighted play for the stat tracker. {{task}}”, the engine inserts the task instructions and then the response schema after the opening sentence. It verifies that the three files are readable, then launches the agent with the rendered prompt. The subject can then inspect the release and arrival frames for positions and follow the ball through the clip for the outcome.</p><p>If the agent tries to install FFmpeg and the requested release is unavailable from the requested source, the session grader flags FFmpeg and links the failed request. If the agent completes the annotation using another video tool, the FFmpeg flag remains visible alongside the answer and integrity verdicts.</p>
-<h3>Public response schema</h3>
-<p>For this illustrative fixture, the schema requires six fields and allows no others. <code>event</code> is the constant <code>throw</code>. <code>thrower</code> and <code>target</code> are roster ID strings. <code>outcome</code> accepts <code>hit</code>, <code>miss</code>, <code>catch</code>, or <code>block</code>. <code>thrower_position</code> and <code>target_position</code> are each an array of two numbers, x then y. On a miss, the target is the player the throw was aimed at.</p>
+<p>Link records by trial ID using the <a href="#storage">project storage schema</a>. Preserve partial evidence on timeout or cancellation.</p>
+<ul><li><strong>Manifest.</strong> Pin task and template IDs independently to GitHub file permalinks with full commit SHAs. Record effective permissions, the base image digest, software and context versions, extensions, exposed tools, and requested and resolved model and effort.</li>
+<li><strong>Session transcript.</strong> Preserve visible messages and tool calls and results in their original order, including turn and call IDs when available. Record any redactions. Exclude credentials and private reasoning.</li>
+<li><strong>Usage and cost.</strong> Preserve native input, output, and cache counters at their reported scope, including whether input totals include cached tokens. Leave missing values unknown. Record wall time and tool resources alongside token usage. Label costs as provider-reported or estimated and retain the pricing basis.</li>
+<li><strong>Results.</strong> Keep the final response, the submission when there is one, the answer-key checks, and the verdict.</li></ul></section><section id="comparisons"><h2>Comparisons</h2>
+<p>Predeclare tasks, trials, and the primary metric. Compare subjects on the same task versions and templates. Record the baseline subject’s permissions and differences in tools, context, or limits. To test wording, vary only the template.</p>
+<p>Report results per task, template, and subject configuration. Show scheduled and scored trials, passes, unscored reasons, elapsed time, and token usage. For example, 20 scheduled trials with two infrastructure errors and 17 passes yield <strong>17/18 scored trials passed (94.4%)</strong>. Label smoke runs and compare suite scores only across compatible coverage.</p></section><section id="dodgeball-stat-tracker"><h2>Dodgeball stat tracker</h2>
+<p>The engine stages the marked throw at <code>clip.mp4</code>, the jersey-to-player mapping at <code>roster.json</code>, and the court overlay at <code>court.png</code> in a fresh workspace. The instructions name those paths and ask, “Who threw the ball, who was the intended target, what happened, and where was the thrower at release and the target at arrival?” The separate <code>response_schema</code> field defines the player IDs, outcome label, and positions.</p>
+<p>For a template reading “Annotate the highlighted play for the stat tracker. {{task}}”, the engine inserts the instructions and then the response schema after the opening sentence. It verifies that the three files are readable, then launches the subject with the delivered prompt. The subject can then inspect the release and arrival frames for positions and follow the ball through the clip for the outcome.</p>
+<h3>Response schema</h3>
+<p>For this illustrative task, the schema requires six fields and allows no others. <code>event</code> is the constant <code>throw</code>. <code>thrower</code> and <code>target</code> are roster ID strings. <code>outcome</code> accepts <code>hit</code>, <code>miss</code>, <code>catch</code>, or <code>block</code>. <code>thrower_position</code> and <code>target_position</code> are each an array of two numbers, x then y. On a miss, the target is the player the throw was aimed at.</p>
 <p>Positions are court metres on the 9 m by 18 m court and locate the midpoint between the player’s feet. The thrower’s position is taken at ball release. The target’s is taken at the ball’s arrival, or at its closest approach on a miss. On the overhead overlay, the top-left corner is (0, 0), x increases to the right across the court’s width, and y increases downward along its length.</p>
 <h3>Example final response</h3>
 <pre><code>{
@@ -208,5 +160,80 @@
   "target_position": [6.5, 11.4]
 }</code></pre>
 <h3>Private answer key</h3>
-<p>In this example, the reviewer annotated <code>p03</code> at (2.4, 6.2) in the release frame and <code>p11</code> at (6.7, 11.2) at the ball’s closest approach, and labeled the outcome <code>miss</code>. The answer grader checks the event, both IDs, and the outcome exactly. Each position array has a distance check with a tolerance of 1 metre.</p>
-<p>The response above passes the answer checks. The thrower’s reported position is about 0.92 m from the annotated one, and the target’s is about 0.28 m. Changing only the thrower’s x to 3.2 puts that position about 1.06 m away, which produces a schema-valid response that fails the answer key. Returning <code>"3.0"</code> for that coordinate instead fails schema validation before the position comparison.</p><p>If trusted records show that the agent read the private answer key, the session grader returns a failing integrity verdict even when every submitted value is correct.</p></section></main></div></body></html>
+<p>In this example, the answer key places <code>p03</code> at (2.4, 6.2) in the release frame and <code>p11</code> at (6.7, 11.2) at the ball’s closest approach, and labels the outcome <code>miss</code>. The answer grader checks the event, both IDs, and the outcome exactly. Each position array has a distance check with a tolerance of 1 metre.</p>
+<p>The response above passes the answer checks. The thrower’s reported position is about 0.92 m from the expected one, and the target’s is about 0.28 m. Changing only the thrower’s x to 3.2 puts that position about 1.06 m away, which produces a schema-valid response that fails the answer key. Returning <code>"3.0"</code> for that coordinate instead fails schema validation before the position comparison.</p></section>
+<section id="future-extensions"><h2>Future extensions</h2>
+<p>The current framework leaves out the following. Each could be added later.</p>
+<ul><li><strong>Session grader.</strong> An agentic grader that reads the session transcript after a trial and returns an integrity verdict, with flags for unavailable tools and suspicious installations.</li>
+<li><strong>Independent observations.</strong> Records of what happened in a trial, made by components outside the subject’s control. They would let integrity be checked against more than the session transcript.</li>
+<li><strong>Package proxy.</strong> A component that routes every software download in a trial and records exactly what was served.</li>
+<li><strong>Tool broker.</strong> A component that mediates the subject’s calls to outside services. It would let a task require an action on a service and confirm that the action happened.</li>
+<li><strong>Regrade.</strong> A new grade for an existing trial from its trial evidence, without executing the subject again. It would avoid new trials when an answer key is corrected.</li>
+<li><strong>Retry.</strong> An automatic replacement, within the same run, for a trial lost to an infrastructure failure.</li>
+<li><strong>Budgets.</strong> Limits on the tokens, time, or cost of a trial, and a rule for grading a trial that exhausts them.</li>
+<li><strong>Incomplete transcripts.</strong> A rule for trials whose session transcript is missing entries.</li>
+<li><strong>Annotations.</strong> A person’s recorded note on a trial, such as labelling a subject error, an infrastructure problem, or a grading defect, kept alongside the original verdict.</li>
+<li><strong>Live fixtures.</strong> Fixtures drawn from data that changes over time, with a schedule for rechecking the answer key.</li>
+<li><strong>Follow-up messages.</strong> Delivered prompts of more than one message, so the engine can continue a conversation with the subject during a trial.</li></ul></section>
+<!-- glossary:start -->
+<section id="glossary"><h2>Glossary</h2>
+<h3>Versioning</h3>
+<dl class="glossary">
+  <div><dt>Persistent ID</dt> <dd>A stable identifier for the same entity across all its versions. For example, <code>dodgeball.annotate-throw</code> identifies the task that asks for the players, positions, and outcome of a marked throw. The task keeps that ID when its grading rule changes. Retired IDs stay reserved.</dd></div>
+  <div><dt>Version</dt> <dd>A fixed snapshot of an entity at a particular point in its history. For tasks and prompt templates, the framework uses the full Git commit SHA as the version identifier. For example, <code>dodgeball.annotate-throw</code> at <code>8f3c2a1…</code> (an illustrative, abbreviated SHA) refers to the task as defined at that commit. If a later commit corrects its grading rule, the task keeps its persistent ID and the new SHA identifies the updated version.</dd></div>
+</dl>
+<h3>Task</h3>
+<dl class="glossary">
+  <div><dt>Task</dt> <dd>A versioned definition of the instructions, response schema, fixtures, and private answer key. The subject sees the instructions, response schema, and fixtures. It never sees the answer key.</dd></div>
+  <div><dt>Fixtures</dt> <dd>The fixed inputs and setup a task version requires before a trial begins. Changing a fixture creates a new task version. For the dodgeball task, the engine places the clip, roster, and court overlay at the paths named in the instructions.</dd></div>
+  <div><dt>Instructions</dt> <dd>The task field that tells the subject what to do.</dd></div>
+  <div><dt>Response schema</dt> <dd>The task field that defines the JSON object the subject must return.</dd></div>
+  <div><dt>Answer key</dt> <dd>The task field that holds the checks the answer grader applies to a submission. The subject never sees it.</dd></div>
+  <div><dt>Draft</dt> <dd>A task version that no approver has published. A run cannot include it.</dd></div>
+  <div><dt>Publication</dt> <dd>An approver’s recorded approval of one task version, after which a run can include that version.</dd></div>
+  <div><dt>Approver</dt> <dd>The person who checks that a draft makes sense and that its answer key is correct, then publishes it.</dd></div>
+</dl>
+<h3>Prompt</h3>
+<dl class="glossary">
+  <div><dt>Prompt template</dt> <dd>Versioned wording with a <code>{{task}}</code> placeholder. The engine fills it with the task’s instructions and JSON response schema to produce the delivered prompt.</dd></div>
+  <div><dt>Delivered prompt</dt> <dd>The exact message the evaluation engine sends to the subject at the start of a trial, after rendering the instructions and response schema in the selected template.</dd></div>
+</dl>
+<h3>Subject</h3>
+<dl class="glossary">
+  <div><dt>Model</dt> <dd>A language model on its own, apart from the program that runs it.</dd></div>
+  <div><dt>Harness</dt> <dd>The program that runs a model in a loop and exposes tools to it.</dd></div>
+  <div><dt>Agent</dt> <dd>A model running in a harness with tools. The framework contains more than one agent: the subject, and usually whatever drafts a task. Each is called by its role, and “agent” names only the general category.</dd></div>
+  <div><dt>Subject</dt> <dd>The agent being evaluated.</dd></div>
+  <div><dt>Subject configuration</dt> <dd>The provider, model, harness, extensions, and reasoning effort that identify a subject. Two subjects with different extensions are different subjects. Permissions are a condition of a run, not part of the subject configuration.</dd></div>
+</dl>
+<h3>Trials and runs</h3>
+<dl class="glossary">
+  <div><dt>Trial</dt> <dd>One execution of a subject on one task using one selected prompt template version. Each trial starts fresh with the task’s fixtures. Repeated trials of a task in a run use the same task and prompt template versions, subject configuration, and tool permissions.</dd></div>
+  <div><dt>Run</dt> <dd>A collection of trials for a specified suite version, subject configuration, and selection of tasks. The run setting <strong>trials per task</strong> specifies how many fresh trials to schedule for each selected task under each selected prompt template.</dd></div>
+  <div><dt>Suite</dt> <dd>A named collection of tasks. Each published suite version pins the task and prompt template versions it includes. A new suite version can pin the corrected task version while earlier trials still point to the version they used.</dd></div>
+</dl>
+<h3>Isolation</h3>
+<dl class="glossary">
+  <div><dt>Sandbox</dt> <dd>The sealed place one trial runs in, which enforces what the subject can reach.</dd></div>
+  <div><dt>Workspace</dt> <dd>The directory inside the sandbox where the fixtures are placed and the subject works.</dd></div>
+</dl>
+<h3>Trial records</h3>
+<dl class="glossary">
+  <div><dt>Manifest</dt> <dd>The conditions a trial ran under, recorded before it starts: the task and prompt template versions, subject configuration, and permissions.</dd></div>
+  <div><dt>Trial evidence</dt> <dd>What is kept from one trial after its workspace is destroyed: the session transcript, the final response, and any files the subject produced. The answer grader and reviewers read only this.</dd></div>
+  <div><dt>Session transcript</dt> <dd>The harness’s own record of the messages, tool calls, and tool results in a trial.</dd></div>
+  <div><dt>Usage</dt> <dd>The resources a trial consumed: tokens, cost, and wall time. It is not trial evidence.</dd></div>
+</dl>
+<h3>Response</h3>
+<dl class="glossary">
+  <div><dt>Final response</dt> <dd>The exact text of the subject’s last message, kept as received. It can be missing.</dd></div>
+  <div><dt>Submission</dt> <dd>The final response read as a single JSON object. There is no submission when the final response is anything other than exactly one JSON object. A submission that violates the response schema is an invalid submission.</dd></div>
+</dl>
+<h3>Grading</h3>
+<dl class="glossary">
+  <div><dt>Verdict</dt> <dd>The answer grader’s result for a trial: pass or fail.</dd></div>
+  <div><dt>Infrastructure failure</dt> <dd>A trial that could not run properly for a reason outside the subject’s doing, such as a provider outage.</dd></div>
+  <div><dt>Unscored</dt> <dd>Having no verdict because the trial ended in an infrastructure failure. Unscored trials are left out of the pass rate.</dd></div>
+</dl>
+</section>
+<!-- glossary:end --></main></div></body></html>
