@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="800" height="1120" viewBox="0 0 800 1120" role="img" aria-labelledby="arch-title arch-desc">
-<title id="arch-title">Architecture of an evaluation attempt</title><desc id="arch-desc">The authoring workbench promotes reviewed draft case versions so runs can include them. The evaluation engine selects a prompt template and a case. Harness extensions expose tools to the model inside the isolated attempt. Every attempt routes software downloads through the package proxy. It forwards requests to agent-selected sources by default. The answer grader scores the submitted JSON, and an agentic session grader reviews the recorded session once to return an integrity verdict and flags for tool availability or suspicious installations. Project SQLite stores queryable run, attempt, evidence, and grading records, with large artifacts kept in linked files.</desc>
+<title id="arch-title">Architecture of an evaluation trial</title><desc id="arch-desc">The authoring workbench publishes draft task versions so runs can include them. The evaluation engine selects a prompt template and a task. Harness extensions expose tools to the model inside the sandbox. The answer grader scores the submission. Project SQLite stores queryable run, trial, evidence, and grading records, with large artifacts kept in linked files.</desc>
 
 <defs><marker id="tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L8 4L0 8Z" fill="#477466"/></marker></defs>
 <style>.arch-title{font:600 20px sans-serif;fill:#193c36}.arch-detail{font:15px sans-serif;fill:#395a51}.arch-label{font:600 14px sans-serif;fill:#395a51}.arch-chip{font:600 13px sans-serif;text-anchor:middle}.arch-arrow{fill:none;stroke:#477466;stroke-width:1.8;marker-end:url(#tip)}</style>
 <rect width="800" height="1080" fill="#f5f8f5"/>
 <rect x="376" y="12" width="388" height="67" rx="10" fill="#ebf2ed" stroke="#87a394"/>
 <text x="392" y="40" class="arch-title">Authoring workbench</text>
-<text x="392" y="63" class="arch-detail">Draft cases and check their answer keys.</text>
+<text x="392" y="63" class="arch-detail">Draft tasks and check their answer keys.</text>
 <path class="arch-arrow" d="M570 79V124"/>
-<text x="582" y="108" class="arch-label">Promote case</text>
+<text x="582" y="108" class="arch-label">Publish task version</text>
 <g transform="translate(0 70)">
 <rect x="36" y="56" width="320" height="136" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="52" y="83" class="arch-title">Prompt template</text>
@@ -17,32 +17,32 @@
 <rect x="156" y="96" width="64" height="23" rx="11" fill="#def0e6" stroke="none"/>
 <text class="arch-chip" x="188" y="112" fill="#275b48">Version</text>
 <rect x="376" y="56" width="388" height="136" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="392" y="83" class="arch-title">Case</text>
+<text x="392" y="83" class="arch-title">Task</text>
 <rect x="392" y="96" width="98" height="23" rx="11" fill="#def0e6" stroke="none"/>
 <text class="arch-chip" x="441" y="112" fill="#275b48">Persistent ID</text>
 <rect x="496" y="96" width="64" height="23" rx="11" fill="#def0e6" stroke="none"/>
 <text class="arch-chip" x="528" y="112" fill="#275b48">Version</text>
 <rect x="52" y="128" width="134" height="23" rx="11" fill="#eee8f7" stroke="none"/>
 <text class="arch-chip" x="119" y="144" fill="#503d67">Template wording</text>
-<rect x="392" y="126" width="49" height="23" rx="11" fill="#eee8f7" stroke="none"/>
-<text class="arch-chip" x="416.5" y="142" fill="#503d67">Task</text>
-<rect x="447" y="126" width="132" height="23" rx="11" fill="#eee8f7" stroke="none"/>
-<text class="arch-chip" x="513" y="142" fill="#503d67">Response schema</text>
-<rect x="585" y="126" width="76" height="23" rx="11" fill="#eee8f7" stroke="none"/>
-<text class="arch-chip" x="623" y="142" fill="#503d67">Fixtures</text>
+<rect x="392" y="126" width="100" height="23" rx="11" fill="#eee8f7" stroke="none"/>
+<text class="arch-chip" x="442" y="142" fill="#503d67">Instructions</text>
+<rect x="498" y="126" width="132" height="23" rx="11" fill="#eee8f7" stroke="none"/>
+<text class="arch-chip" x="564" y="142" fill="#503d67">Response schema</text>
+<rect x="636" y="126" width="76" height="23" rx="11" fill="#eee8f7" stroke="none"/>
+<text class="arch-chip" x="674" y="142" fill="#503d67">Fixtures</text>
 <rect x="392" y="156" width="95" height="23" rx="11" fill="#eee8f7" stroke="none"/>
 <text class="arch-chip" x="439.5" y="172" fill="#503d67">Answer key</text>
 <path class="arch-arrow" d="M196 192V233"/><path class="arch-arrow" d="M570 192V233"/>
 <rect x="36" y="235" width="728" height="77" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="54" y="265" class="arch-title">Evaluation engine</text>
-<text x="54" y="292" class="arch-detail">Prepare fixtures, render the prompt, and launch the agent.</text>
+<text x="54" y="292" class="arch-detail">Prepare fixtures, render the prompt, and launch the subject.</text>
 <path fill="none" stroke="#477466" stroke-width="1.8" d="M206 312V350"/>
 <text x="220" y="337" class="arch-label">Delivered prompt</text>
-<rect x="36" y="350" width="374" height="195" rx="10" fill="#e7f1ea" stroke="#87a394"/>
-<text x="52" y="377" class="arch-label">Isolated attempt</text>
-<rect x="52" y="389" width="342" height="140" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="67" y="417" class="arch-title">Tool-using agent</text>
-<text x="67" y="441" class="arch-detail">Agent configuration</text>
+<rect x="36" y="350" width="728" height="195" rx="10" fill="#e7f1ea" stroke="#87a394"/>
+<text x="52" y="377" class="arch-label">Sandbox</text>
+<rect x="52" y="389" width="696" height="140" rx="10" fill="#fff" stroke="#a3b8ae"/>
+<text x="67" y="417" class="arch-title">Subject</text>
+<text x="67" y="441" class="arch-detail">Subject configuration</text>
 <rect x="67" y="455" width="74" height="23" rx="11" fill="#eee8f7" stroke="none"/>
 <text class="arch-chip" x="104" y="471" fill="#503d67">Provider</text>
 <rect x="147" y="455" width="60" height="23" rx="11" fill="#eee8f7" stroke="none"/>
@@ -55,37 +55,19 @@
 <rect x="203" y="489" width="94" height="23" rx="11" fill="#eee8f7"/>
 <text class="arch-chip" x="250" y="505" fill="#503d67">Extensions</text>
 <path class="arch-arrow" d="M206 350V387"/>
-<rect x="474" y="389" width="290" height="69" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="492" y="418" class="arch-title">Package proxy</text>
-<text x="492" y="442" class="arch-detail">Forward downloads by default.</text>
-<path class="arch-arrow" d="M394 426H472"/>
-<text x="416" y="402" class="arch-label">Install</text>
-<text x="416" y="418" class="arch-label">tools</text>
-<rect x="474" y="480" width="290" height="109" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="492" y="510" class="arch-title">Tool broker (optional)</text>
-<text x="492" y="540" class="arch-detail">Scope service access and record actions.</text>
-<path class="arch-arrow" d="M396 476H440V534H472" marker-start="url(#tip)"/>
 <path class="arch-arrow" d="M223 545V618"/>
-<path class="arch-arrow" d="M764 424H782V600H649V618"/>
-<path class="arch-arrow" d="M619 589V618"/>
 <rect x="36" y="620" width="728" height="74" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="54" y="649" class="arch-title">Attempt evidence</text>
-<text x="54" y="675" class="arch-detail">Archived session transcript, final response, usage, and independent observations</text>
+<text x="54" y="649" class="arch-title">Trial evidence</text>
+<text x="54" y="675" class="arch-detail">Session transcript, final response, and files</text>
 <path class="arch-arrow" d="M211 694V726"/>
-<path class="arch-arrow" d="M589 694V726"/>
-<rect x="36" y="728" width="350" height="108" rx="10" fill="#fff" stroke="#a3b8ae"/>
+<rect x="36" y="728" width="728" height="108" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="52" y="757" class="arch-title">Answer grader</text>
 <text x="52" y="786" class="arch-detail">Check the submission against the schema,</text>
-<text x="52" y="806" class="arch-detail">answer key, and required effects.</text>
-<rect x="414" y="728" width="350" height="108" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="430" y="757" class="arch-title">Session grader</text>
-<text x="430" y="786" class="arch-detail">One agentic review of session evidence</text>
-<text x="430" y="806" class="arch-detail">checks integrity, installs, and availability.</text>
+<text x="52" y="806" class="arch-detail">answer key, and required artifacts.</text>
 <path class="arch-arrow" d="M211 836V868H286V870"/>
-<path class="arch-arrow" d="M589 836V868H286"/>
 <rect x="36" y="870" width="500" height="72" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="54" y="899" class="arch-title">Project SQLite database</text>
-<text x="54" y="925" class="arch-detail">Runs, attempts, events, grades, annotations, and artifact references</text>
+<text x="54" y="925" class="arch-detail">Runs, trials, grades, and artifact references</text>
 <rect x="554" y="870" width="210" height="72" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="570" y="899" class="arch-title">Large artifacts</text>
 <text x="570" y="925" class="arch-detail">Files and tool results</text>
@@ -93,5 +75,5 @@
 <text x="469" y="893" class="arch-label">references</text>
 <path class="arch-arrow" d="M286 942V963"/>
 <rect x="36" y="965" width="728" height="65" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="54" y="993" class="arch-title">Dashboard and review</text>
-<text x="54" y="1018" class="arch-detail">Query runs and attempts, then open linked evidence.</text></g></svg>
+<text x="54" y="993" class="arch-title">Dashboard</text>
+<text x="54" y="1018" class="arch-detail">Query runs and trials, then open linked evidence.</text></g></svg>
