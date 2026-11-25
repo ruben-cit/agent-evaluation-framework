@@ -32,10 +32,10 @@ The task field that defines the JSON object the subject must return.
 The task field that holds the checks the answer grader applies to a submission. The subject never sees it.
 
 **Draft**:
-A task version that no approver has published. A run cannot include it.
+A task version that no approver has published. A job cannot include it.
 
 **Publication**:
-An approver’s recorded approval of one task version, after which a run can include that version.
+An approver’s recorded approval of one task version, after which a job can include that version.
 _Avoid_: promotion, publish the task
 
 **Approver**:
@@ -67,17 +67,18 @@ The agent being evaluated.
 _Avoid_: agent, tool-using agent, model
 
 **Subject configuration**:
-The provider, model, harness, extensions, and reasoning effort that identify a subject. Two subjects with different extensions are different subjects. Permissions are a condition of a run, not part of the subject configuration.
+The provider, model, harness, extensions, and reasoning effort that identify a subject. Two subjects with different extensions are different subjects. Permissions are a condition of a job, not part of the subject configuration.
 _Avoid_: agent configuration
 
-### Trials and runs
+### Trials and jobs
 
 **Trial**:
-One execution of a subject on one task using one selected prompt template version. Each trial starts fresh with the task’s fixtures. Repeated trials of a task in a run use the same task and prompt template versions, subject configuration, and tool permissions.
+One execution of a subject on one task using one selected prompt template version. Each trial starts fresh with the task’s fixtures. Repeated trials of a task in a job use the same task and prompt template versions, subject configuration, and tool permissions.
 _Avoid_: attempt, replication
 
-**Run**:
-A collection of trials for a specified suite version, subject configuration, and selection of tasks. The run setting **trials per task** specifies how many fresh trials to schedule for each selected task under each selected prompt template.
+**Job**:
+A collection of trials for a specified suite version, subject configuration, and selection of tasks. The job setting **trials per task** specifies how many fresh trials to schedule for each selected task under each selected prompt template.
+_Avoid_: run, experiment
 
 **Suite**:
 A named collection of tasks. Each published suite version pins the task and prompt template versions it includes. A new suite version can pin the corrected task version while earlier trials still point to the version they used.

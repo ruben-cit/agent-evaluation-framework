@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="800" height="1120" viewBox="0 0 800 1120" role="img" aria-labelledby="arch-title arch-desc">
-<title id="arch-title">Architecture of an evaluation trial</title><desc id="arch-desc">The authoring workbench publishes draft task versions so runs can include them. The evaluation engine selects a prompt template and a task. Harness extensions expose tools to the model inside the sandbox. The answer grader grades the submission. Project SQLite stores queryable run, trial, evidence, and grading records, with large artifacts kept in linked files.</desc>
+<title id="arch-title">Architecture of an evaluation trial</title><desc id="arch-desc">The authoring workbench publishes draft task versions so jobs can include them. The evaluation engine selects a prompt template and a task. Harness extensions expose tools to the model inside the sandbox. The answer grader grades the submission. Project SQLite stores queryable job, trial, evidence, and grading records, with large artifacts kept in linked files.</desc>
 
 <defs><marker id="tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L8 4L0 8Z" fill="#477466"/></marker></defs>
 <style>.arch-title{font:600 20px sans-serif;fill:#193c36}.arch-detail{font:15px sans-serif;fill:#395a51}.arch-label{font:600 14px sans-serif;fill:#395a51}.arch-chip{font:600 13px sans-serif;text-anchor:middle}.arch-arrow{fill:none;stroke:#477466;stroke-width:1.8;marker-end:url(#tip)}</style>
@@ -67,7 +67,7 @@
 <path class="arch-arrow" d="M211 836V868H286V870"/>
 <rect x="36" y="870" width="500" height="72" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="54" y="899" class="arch-title">Project SQLite database</text>
-<text x="54" y="925" class="arch-detail">Runs, trials, grades, and artifact references</text>
+<text x="54" y="925" class="arch-detail">Jobs, trials, grades, and artifact references</text>
 <rect x="554" y="870" width="210" height="72" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="570" y="899" class="arch-title">Large artifacts</text>
 <text x="570" y="925" class="arch-detail">Files and tool results</text>
@@ -76,4 +76,4 @@
 <path class="arch-arrow" d="M286 942V963"/>
 <rect x="36" y="965" width="728" height="65" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="54" y="993" class="arch-title">Dashboard</text>
-<text x="54" y="1018" class="arch-detail">Query runs and trials, then open linked evidence.</text></g></svg>
+<text x="54" y="1018" class="arch-detail">Query jobs and trials, then open linked evidence.</text></g></svg>
