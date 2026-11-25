@@ -77,11 +77,8 @@ One execution of a subject on one task using one selected prompt template versio
 _Avoid_: attempt, replication
 
 **Job**:
-A collection of trials for a specified suite version, subject configuration, and selection of tasks. The job setting **trials per task** specifies how many fresh trials to schedule for each selected task under each selected prompt template.
+A collection of trials for a specified subject configuration and selection of task versions. The job setting **trials per task** specifies how many fresh trials to schedule for each selected task under each selected prompt template.
 _Avoid_: run, experiment
-
-**Suite**:
-A named collection of tasks. Each published suite version pins the task and prompt template versions it includes. A new suite version can pin the corrected task version while earlier trials still point to the version they used.
 
 ### Isolation
 

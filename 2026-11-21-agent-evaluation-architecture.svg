@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="800" height="1120" viewBox="0 0 800 1120" role="img" aria-labelledby="arch-title arch-desc">
-<title id="arch-title">Architecture of an evaluation trial</title><desc id="arch-desc">The authoring workbench publishes draft task versions so jobs can include them. The evaluation engine selects a prompt template and a task. Harness extensions expose tools to the model inside the sandbox. The answer grader grades the submission. Project SQLite stores queryable job, trial, evidence, and grading records, with large artifacts kept in linked files.</desc>
+<title id="arch-title">Architecture of an evaluation trial</title><desc id="arch-desc">Task authoring publishes draft task versions so jobs can include them. The evaluation engine selects a prompt template and a task. Harness extensions expose tools to the model inside the sandbox. The answer grader grades the submission. Project SQLite stores queryable job, trial, evidence, and grading records, with large artifacts kept in linked files.</desc>
 
 <defs><marker id="tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L8 4L0 8Z" fill="#477466"/></marker></defs>
 <style>.arch-title{font:600 20px sans-serif;fill:#193c36}.arch-detail{font:15px sans-serif;fill:#395a51}.arch-label{font:600 14px sans-serif;fill:#395a51}.arch-chip{font:600 13px sans-serif;text-anchor:middle}.arch-arrow{fill:none;stroke:#477466;stroke-width:1.8;marker-end:url(#tip)}</style>
 <rect width="800" height="1080" fill="#f5f8f5"/>
 <rect x="376" y="12" width="388" height="67" rx="10" fill="#ebf2ed" stroke="#87a394"/>
-<text x="392" y="40" class="arch-title">Authoring workbench</text>
+<text x="392" y="40" class="arch-title">Task authoring</text>
 <text x="392" y="63" class="arch-detail">Draft tasks and check their answer keys.</text>
 <path class="arch-arrow" d="M570 79V124"/>
 <text x="582" y="108" class="arch-label">Publish task version</text>
