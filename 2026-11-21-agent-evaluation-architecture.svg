@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="800" height="1120" viewBox="0 0 800 1120" role="img" aria-labelledby="arch-title arch-desc">
-<title id="arch-title">Architecture of an evaluation trial</title><desc id="arch-desc">Task authoring publishes draft task versions so jobs can include them. The evaluation engine selects a prompt template and a task. Harness extensions expose tools to the model inside the sandbox. The answer grader grades the submission. Project SQLite stores queryable job, trial, evidence, and grading records, with large artifacts kept in linked files.</desc>
+<title id="arch-title">Architecture of an evaluation trial</title><desc id="arch-desc">Task authoring publishes draft task versions so jobs can include them. The evaluation engine selects a task and one of its prompt variants. Harness extensions expose tools to the model inside the sandbox. The answer grader grades the submission. Project SQLite stores queryable job, trial, evidence, and grading records, with large artifacts kept in linked files.</desc>
 
 <defs><marker id="tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L8 4L0 8Z" fill="#477466"/></marker></defs>
 <style>.arch-title{font:600 20px sans-serif;fill:#193c36}.arch-detail{font:15px sans-serif;fill:#395a51}.arch-label{font:600 14px sans-serif;fill:#395a51}.arch-chip{font:600 13px sans-serif;text-anchor:middle}.arch-arrow{fill:none;stroke:#477466;stroke-width:1.8;marker-end:url(#tip)}</style>
@@ -10,32 +10,24 @@
 <path class="arch-arrow" d="M570 79V124"/>
 <text x="582" y="108" class="arch-label">Publish task version</text>
 <g transform="translate(0 70)">
-<rect x="36" y="56" width="320" height="136" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="52" y="83" class="arch-title">Prompt template</text>
+<rect x="36" y="56" width="728" height="136" rx="10" fill="#fff" stroke="#a3b8ae"/>
+<text x="52" y="83" class="arch-title">Task</text>
 <rect x="52" y="96" width="98" height="23" rx="11" fill="#def0e6" stroke="none"/>
 <text class="arch-chip" x="101" y="112" fill="#275b48">Persistent ID</text>
 <rect x="156" y="96" width="64" height="23" rx="11" fill="#def0e6" stroke="none"/>
 <text class="arch-chip" x="188" y="112" fill="#275b48">Version</text>
-<rect x="376" y="56" width="388" height="136" rx="10" fill="#fff" stroke="#a3b8ae"/>
-<text x="392" y="83" class="arch-title">Task</text>
-<rect x="392" y="96" width="98" height="23" rx="11" fill="#def0e6" stroke="none"/>
-<text class="arch-chip" x="441" y="112" fill="#275b48">Persistent ID</text>
-<rect x="496" y="96" width="64" height="23" rx="11" fill="#def0e6" stroke="none"/>
-<text class="arch-chip" x="528" y="112" fill="#275b48">Version</text>
-<rect x="52" y="128" width="134" height="23" rx="11" fill="#eee8f7" stroke="none"/>
-<text class="arch-chip" x="119" y="144" fill="#503d67">Template wording</text>
-<rect x="392" y="126" width="100" height="23" rx="11" fill="#eee8f7" stroke="none"/>
-<text class="arch-chip" x="442" y="142" fill="#503d67">Instructions</text>
-<rect x="498" y="126" width="132" height="23" rx="11" fill="#eee8f7" stroke="none"/>
-<text class="arch-chip" x="564" y="142" fill="#503d67">Response schema</text>
-<rect x="636" y="126" width="76" height="23" rx="11" fill="#eee8f7" stroke="none"/>
-<text class="arch-chip" x="674" y="142" fill="#503d67">Fixtures</text>
-<rect x="392" y="156" width="95" height="23" rx="11" fill="#eee8f7" stroke="none"/>
-<text class="arch-chip" x="439.5" y="172" fill="#503d67">Answer key</text>
-<path class="arch-arrow" d="M196 192V233"/><path class="arch-arrow" d="M570 192V233"/>
+<rect x="52" y="126" width="124" height="23" rx="11" fill="#eee8f7" stroke="none"/>
+<text class="arch-chip" x="114" y="142" fill="#503d67">Prompt variants</text>
+<rect x="182" y="126" width="132" height="23" rx="11" fill="#eee8f7" stroke="none"/>
+<text class="arch-chip" x="248" y="142" fill="#503d67">Response schema</text>
+<rect x="320" y="126" width="76" height="23" rx="11" fill="#eee8f7" stroke="none"/>
+<text class="arch-chip" x="358" y="142" fill="#503d67">Fixtures</text>
+<rect x="52" y="156" width="95" height="23" rx="11" fill="#eee8f7" stroke="none"/>
+<text class="arch-chip" x="99.5" y="172" fill="#503d67">Answer key</text>
+<path class="arch-arrow" d="M570 192V233"/>
 <rect x="36" y="235" width="728" height="77" rx="10" fill="#fff" stroke="#a3b8ae"/>
 <text x="54" y="265" class="arch-title">Evaluation engine</text>
-<text x="54" y="292" class="arch-detail">Prepare fixtures, render the prompt, and launch the subject.</text>
+<text x="54" y="292" class="arch-detail">Prepare fixtures, assemble the prompt, and launch the subject.</text>
 <path fill="none" stroke="#477466" stroke-width="1.8" d="M206 312V350"/>
 <text x="220" y="337" class="arch-label">Delivered prompt</text>
 <rect x="36" y="350" width="728" height="195" rx="10" fill="#e7f1ea" stroke="#87a394"/>

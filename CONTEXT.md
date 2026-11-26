@@ -10,20 +10,21 @@ The language of an open framework for evaluating tool-using agents on versioned 
 A stable identifier for the same entity across all its versions. For example, `dodgeball.annotate-throw` identifies the task that asks for the players, positions, and outcome of a marked throw. The task keeps that ID when its answer key changes. Retired IDs stay reserved.
 
 **Version**:
-A fixed snapshot of an entity at a particular point in its history. For tasks and prompt templates, the framework uses the full Git commit SHA as the version identifier. For example, `dodgeball.annotate-throw` at `8f3c2a1…` (an illustrative, abbreviated SHA) refers to the task as defined at that commit. If a later commit corrects its answer key, the task keeps its persistent ID and the new SHA identifies the updated version.
+A fixed snapshot of an entity at a particular point in its history. For tasks, the framework uses the full Git commit SHA as the version identifier. For example, `dodgeball.annotate-throw` at `8f3c2a1…` (an illustrative, abbreviated SHA) refers to the task as defined at that commit. If a later commit corrects its answer key, the task keeps its persistent ID and the new SHA identifies the updated version.
 
 ### Task
 
 **Task**:
-A versioned definition of the instructions, response schema, fixtures, and private answer key. The subject sees the instructions, response schema, and fixtures. It never sees the answer key.
+A versioned definition of the prompt variants, response schema, fixtures, and private answer key. The subject sees one prompt variant, the response schema, and the fixtures. It never sees the answer key.
 _Avoid_: case
 
 **Fixtures**:
-The fixed inputs and setup a task version requires before a trial begins. Changing a fixture creates a new task version. For the dodgeball task, the engine places the clip, roster, and court overlay at the paths named in the instructions.
+The fixed inputs and setup a task version requires before a trial begins. Changing a fixture creates a new task version. For the dodgeball task, the engine places the clip, roster, and court overlay at the paths named in its prompt variants.
 _Avoid_: live fixtures, fixture version
 
-**Instructions**:
-The task field that tells the subject what to do.
+**Prompt variant**:
+One named wording of what the task asks the subject to do. A task has one or more, and all of them share the task’s response schema, fixtures, and answer key. Changing a prompt variant creates a new task version.
+_Avoid_: prompt template, instructions
 
 **Response schema**:
 The task field that defines the JSON object the subject must return.
@@ -39,16 +40,13 @@ An approver’s recorded approval of one task version, after which a job can inc
 _Avoid_: promotion, publish the task
 
 **Approver**:
-The person who checks that a draft makes sense and that its answer key is correct, then publishes it.
+The person who checks that a draft makes sense, that its prompt variants ask for the same thing, and that its answer key is correct, then publishes it.
 _Avoid_: reviewer
 
 ### Prompt
 
-**Prompt template**:
-Versioned wording with a `{{task}}` placeholder. The engine fills it with the task’s instructions and JSON response schema to produce the delivered prompt.
-
 **Delivered prompt**:
-The exact message the evaluation engine sends to the subject at the start of a trial, after rendering the instructions and response schema in the selected template.
+The exact message the evaluation engine sends to the subject at the start of a trial: the selected prompt variant followed by the response schema.
 _Avoid_: rendered prompt, prompt sent
 
 ### Subject
@@ -73,11 +71,11 @@ _Avoid_: agent configuration
 ### Trials and jobs
 
 **Trial**:
-One execution of a subject on one task using one selected prompt template version. Each trial starts fresh with the task’s fixtures. Repeated trials of a task in a job use the same task and prompt template versions, subject configuration, and tool permissions.
+One execution of a subject on one task version using one of its prompt variants. Each trial starts fresh with the task’s fixtures. Repeated trials of a task in a job use the same task version, subject configuration, and tool permissions.
 _Avoid_: attempt, replication
 
 **Job**:
-A collection of trials for a specified subject configuration and selection of task versions. The job setting **trials per task** specifies how many fresh trials to schedule for each selected task under each selected prompt template.
+A collection of trials for a specified subject configuration and selection of task versions. The job setting **trials per task** specifies how many fresh trials to schedule for each selected task under each selected prompt variant.
 _Avoid_: run, experiment
 
 ### Isolation
@@ -92,7 +90,7 @@ The directory inside the sandbox where the fixtures are placed and the subject w
 ### Trial records
 
 **Manifest**:
-The conditions a trial ran under, recorded before it starts: the task and prompt template versions, subject configuration, and permissions.
+The conditions a trial ran under, recorded before it starts: the task version, prompt variant, subject configuration, and permissions.
 _Avoid_: metadata
 
 **Trial evidence**:
